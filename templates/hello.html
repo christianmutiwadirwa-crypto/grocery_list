@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grocery Items</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body class="body">
+
+<div class="sidebar">
+    <div class="inner_top">
+        <p><b>Commonality between grocery items</b></p>
+    </div>
+
+    <div class="inner_lower">
+        <p>Add New Member</p>
+        <button type="button" id="addmember">Add Member</button>
+        <br>
+        <p>Reset Form Contents</p>
+        <button type="reset" id="resetAll">Reset</button>
+        <br>
+        <p>Submit All Forms</p>
+        <button type="button" id="submitAll">Submit All</button>
+        <br>
+        <p>Custom Comparison</p>
+        <button type="button" id="compareBtn">Compare</button>
+    </div>
+</div>
+
+<header class="main_header">
+    <div class="header-content">
+        <h1>Grocery List Comparison</h1>
+        <p><i>Use of discrete mathematics in grocery list optimization</i></p>
+    </div>
+</header>
+
+<div class="form_container">
+    <form id="mainForm" action="/submit" method="post" autocomplete="on">
+        <div class="member">
+            <label for="name1">Enter family member 1's name:</label><br>
+            <input type="text" name="name[]" id="name1" placeholder="Chris" required><br><br>
+
+            <label for="items1">Enter your monthly grocery items:</label><br>
+            <textarea name="grocery_items[]" id="items1" rows="5" cols="20"></textarea><br><br>
+        </div>
+
+        <div class="member">
+            <label for="name2">Enter family member 2's name:</label><br>
+            <input type="text" name="name[]" id="name2" placeholder="Panashe" required><br><br>
+
+            <label for="items2">Enter your monthly grocery items:</label><br>
+            <textarea name="grocery_items[]" id="items2" rows="5" cols="20"></textarea><br><br>
+        </div>
+    </form>
+
+{% if data %}
+    <div class="results">
+        <h2>All Members' Grocery Items:</h2>
+        {% for name, items in data.items() %}
+            <div style="margin-bottom:10px;">
+                <strong>{{ name }}:</strong> 
+                {{ items|join(", ") if items else "None" }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+{% if union %}
+    <div class="results"><h2>Union of all items:</h2><p>{{ union|join(", ") }}</p></div>
+{% endif %}
+{% if intersection %}
+    <div class="results"><h2>Intersection of all items:</h2><p>{{ intersection|join(", ") }}</p></div>
+{% endif %}
+{% if cardinalities %}
+    <div class="results"><h2>Cardinalities per member:</h2>
+        <ul style="list-style:none; padding-left:0;">
+        {% for name, count in cardinalities.items() %}
+            <li><strong>{{ name }}:</strong> {{ count }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+
+
+
+</div>
+
+
+
+<script>
+    const dictionaryMembersObj = {{ data|tojson }};
+    const dictionaryMembers = Object.keys(dictionaryMembersObj);
+</script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
